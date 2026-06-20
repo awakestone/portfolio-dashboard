@@ -143,8 +143,7 @@ canvas{
 
 <script>
 
-const API_KEY = "这里替换成你的新APIKEY";
-
+const API_KEY = "d8rbcepr01qni6thkqcgd8rbcepr01qni6thkqd0";
 const holdings = [
 
 {symbol:"TQQQ",shares:630,cost:28.01},
@@ -161,7 +160,128 @@ const holdings = [
 {symbol:"TSLA",shares:2,cost:225.38}
 
 ];
+let pieChart = null;
 
+async function loadPortfolio() {
+
+    let totalValue = 0;
+    let totalCost = 0;
+    let totalPnl = 0;
+
+    const tbody = document.getElementById("portfolioBody");
+    tbody.innerHTML = "";
+
+    const chartLabels = [];
+    const chartValues = [];
+
+    for (const h of holdings) {
+
+        try {
+
+            const response = await fetch(
+                `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
+            );
+
+            const data = await response.json();
+
+            const price = Number(data.c);
+
+            if (!price || price <= 0) continue;
+
+            const marketValue = price * h.shares;
+            const costValue = h.cost * h.shares;
+            const pnl = marketValue - costValue;
+
+            totalValue += marketValue;
+            totalCost += costValue;
+            totalPnl += pnl;
+
+            chartLabels.push(h.symbol);
+            chartValues.push(marketValue);
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${h.symbol}</td>
+                <td>${h.shares}</td>
+                <td>${h.cost.toFixed(2)}</td>
+                <td>${price.toFixed(2)}</td>
+                <td>$${marketValue.toLocaleString()}</td>
+                <td class="${pnl >= 0 ? 'positive':'negative'}">
+                    $${pnl.toLocaleString()}
+                </td>
+                <td class="weight-cell">...</td>
+            `;
+
+            tbody.appendChild(row);
+
+        } catch(err) {
+            console.log(h.symbol, err);
+        }
+    }
+
+    const returnPct =
+        totalCost > 0
+        ? ((totalPnl / totalCost) * 100)
+        : 0;
+
+    document.getElementById("totalUsd").innerText =
+        "$" + totalValue.toLocaleString(undefined,{maximumFractionDigits:0});
+
+    document.getElementById("totalCny").innerText =
+        "¥" + (totalValue * 7.2).toLocaleString(undefined,{maximumFractionDigits:0});
+
+    document.getElementById("totalPnl").innerText =
+        "$" + totalPnl.toLocaleString(undefined,{maximumFractionDigits:0});
+
+    document.getElementById("totalPnl").className =
+        totalPnl >= 0 ? "value positive" : "value negative";
+
+    document.getElementById("totalReturn").innerText =
+        returnPct.toFixed(2) + "%";
+
+    const rows = tbody.querySelectorAll("tr");
+
+    rows.forEach((row,index)=>{
+
+        const weight =
+            chartValues[index] / totalValue * 100;
+
+        row.querySelector(".weight-cell").innerText =
+            weight.toFixed(2) + "%";
+    });
+
+    if (pieChart) {
+        pieChart.destroy();
+    }
+
+    pieChart = new Chart(
+        document.getElementById("pieChart"),
+        {
+            type:"pie",
+            data:{
+                labels:chartLabels,
+                datasets:[
+                    {
+                        data:chartValues
+                    }
+                ]
+            },
+            options:{
+                responsive:true,
+                plugins:{
+                    legend:{
+                        position:"right"
+                    }
+                }
+            }
+        }
+    );
+}
+
+loadPortfolio();
+
+setInterval(loadPortfolio,60000);
 </script>
 
 </body>
