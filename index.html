@@ -1,98 +1,22 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Awakestone Portfolio Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Awakestone Portfolio Dashboard V2</title>
+
+<link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    padding:20px;
-    background:#f5f5f5;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-
-h1{
-    margin-bottom:20px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.card{
-    background:white;
-    border-radius:12px;
-    padding:15px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.card h3{
-    margin:0 0 10px 0;
-    font-size:14px;
-    color:#666;
-}
-
-.value{
-    font-size:24px;
-    font-weight:bold;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:12px;
-    overflow:hidden;
-}
-
-th{
-    background:#f0f0f0;
-}
-
-th,td{
-    padding:10px;
-    border-bottom:1px solid #eee;
-    text-align:right;
-}
-
-th:first-child,
-td:first-child{
-    text-align:left;
-}
-
-canvas{
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    margin-top:20px;
-}
-
-.positive{
-    color:green;
-}
-
-.negative{
-    color:red;
-}
-
-</style>
 </head>
 
 <body>
 
-<h1>投资组合仪表盘</h1>
+<h1>投资组合仪表盘 V2</h1>
 
 <div class="grid">
 
@@ -118,171 +42,73 @@ canvas{
 
 </div>
 
+<div class="grid">
+
+<div class="card">
+<h3>AI仓位</h3>
+<div id="aiWeight" class="value">0%</div>
+</div>
+
+<div class="card">
+<h3>杠杆仓位</h3>
+<div id="leveragedWeight" class="value">0%</div>
+</div>
+
+<div class="card">
+<h3>债券仓位</h3>
+<div id="bondWeight" class="value">0%</div>
+</div>
+
+<div class="card">
+<h3>现金仓位</h3>
+<div id="cashWeight" class="value">0%</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>风险监控</h3>
+
+<div id="largestPosition"></div>
+
+<div id="nvdaExposure"></div>
+
+<div id="riskAlerts"></div>
+
+</div>
+
 <table>
 
 <thead>
 
 <tr>
+
 <th>代码</th>
 <th>股数</th>
 <th>成本</th>
 <th>现价</th>
+<th>收益率</th>
 <th>市值</th>
 <th>盈亏</th>
 <th>占比</th>
+
 </tr>
 
 </thead>
 
 <tbody id="portfolioBody">
+
 </tbody>
 
 </table>
 
 <canvas id="pieChart"></canvas>
 
-<script>
+<canvas id="allocationChart"></canvas>
 
-const API_KEY = "d8rbcepr01qni6thkqcgd8rbcepr01qni6thkqd0";
-const holdings = [
-
-{symbol:"TQQQ",shares:630,cost:28.01},
-{symbol:"NVDA",shares:318,cost:69.99},
-{symbol:"MSFT",shares:88,cost:283.56},
-{symbol:"TSM",shares:61,cost:178.60},
-{symbol:"QQQ",shares:38,cost:278.70},
-{symbol:"TLT",shares:209,cost:93.88},
-{symbol:"AMZN",shares:29,cost:260.65},
-{symbol:"META",shares:12,cost:334.38},
-{symbol:"TMF",shares:161,cost:56.62},
-{symbol:"UPRO",shares:30,cost:63.00},
-{symbol:"SGOV",shares:40,cost:100.47},
-{symbol:"TSLA",shares:2,cost:225.38}
-
-];
-let pieChart = null;
-
-async function loadPortfolio() {
-
-    let totalValue = 0;
-    let totalCost = 0;
-    let totalPnl = 0;
-
-    const tbody = document.getElementById("portfolioBody");
-    tbody.innerHTML = "";
-
-    const chartLabels = [];
-    const chartValues = [];
-
-    for (const h of holdings) {
-
-        try {
-
-            const response = await fetch(
-                `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
-            );
-
-            const data = await response.json();
-
-            const price = Number(data.c);
-
-            if (!price || price <= 0) continue;
-
-            const marketValue = price * h.shares;
-            const costValue = h.cost * h.shares;
-            const pnl = marketValue - costValue;
-
-            totalValue += marketValue;
-            totalCost += costValue;
-            totalPnl += pnl;
-
-            chartLabels.push(h.symbol);
-            chartValues.push(marketValue);
-
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td>${h.symbol}</td>
-                <td>${h.shares}</td>
-                <td>${h.cost.toFixed(2)}</td>
-                <td>${price.toFixed(2)}</td>
-                <td>$${marketValue.toLocaleString()}</td>
-                <td class="${pnl >= 0 ? 'positive':'negative'}">
-                    $${pnl.toLocaleString()}
-                </td>
-                <td class="weight-cell">...</td>
-            `;
-
-            tbody.appendChild(row);
-
-        } catch(err) {
-            console.log(h.symbol, err);
-        }
-    }
-
-    const returnPct =
-        totalCost > 0
-        ? ((totalPnl / totalCost) * 100)
-        : 0;
-
-    document.getElementById("totalUsd").innerText =
-        "$" + totalValue.toLocaleString(undefined,{maximumFractionDigits:0});
-
-    document.getElementById("totalCny").innerText =
-        "¥" + (totalValue * 7.2).toLocaleString(undefined,{maximumFractionDigits:0});
-
-    document.getElementById("totalPnl").innerText =
-        "$" + totalPnl.toLocaleString(undefined,{maximumFractionDigits:0});
-
-    document.getElementById("totalPnl").className =
-        totalPnl >= 0 ? "value positive" : "value negative";
-
-    document.getElementById("totalReturn").innerText =
-        returnPct.toFixed(2) + "%";
-
-    const rows = tbody.querySelectorAll("tr");
-
-    rows.forEach((row,index)=>{
-
-        const weight =
-            chartValues[index] / totalValue * 100;
-
-        row.querySelector(".weight-cell").innerText =
-            weight.toFixed(2) + "%";
-    });
-
-    if (pieChart) {
-        pieChart.destroy();
-    }
-
-    pieChart = new Chart(
-        document.getElementById("pieChart"),
-        {
-            type:"pie",
-            data:{
-                labels:chartLabels,
-                datasets:[
-                    {
-                        data:chartValues
-                    }
-                ]
-            },
-            options:{
-                responsive:true,
-                plugins:{
-                    legend:{
-                        position:"right"
-                    }
-                }
-            }
-        }
-    );
-}
-
-loadPortfolio();
-
-setInterval(loadPortfolio,60000);
-</script>
+<script src="app.js"></script>
 
 </body>
+
 </html>
