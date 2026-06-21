@@ -1,5 +1,4 @@
-let equityChart=null;
-const API_KEY = "d8rbcepr01qni6thkqcgd8rbcepr01qni6thkqd0";
+const API_KEY = "替换成你的Finnhub新API";
 
 const holdings = [
 
@@ -41,52 +40,7 @@ async function getUSDCNY(){
     }
 
 }
-function savePortfolioHistory(totalValue){
 
-    const today =
-    new Date()
-    .toISOString()
-    .split("T")[0];
-
-    let history =
-    JSON.parse(
-    localStorage.getItem(
-    "portfolioHistory"
-    ) || "[]"
-    );
-
-    const existing =
-    history.find(
-    x=>x.date===today
-    );
-
-    if(existing){
-
-        existing.value =
-        totalValue;
-
-    }else{
-
-        history.push({
-
-            date:today,
-
-            value:totalValue
-
-        });
-
-    }
-
-    history=
-    history.slice(-365);
-
-    localStorage.setItem(
-    "portfolioHistory",
-    JSON.stringify(history)
-    );
-
-    return history;
-}
 async function loadPortfolio(){
 
     const tbody =
@@ -326,111 +280,7 @@ async function loadPortfolio(){
     totalValue*
     100
     ).toFixed(1)+"%";
-    const history =
-savePortfolioHistory(
-totalValue
-);
 
-const peak =
-Math.max(
-...history.map(
-x=>x.value
-)
-);
-
-const drawdown =
-(
-(totalValue-peak)
-/peak
-*100
-);
-
-document.getElementById(
-"peakValue"
-).innerHTML=
-"$"+
-peak.toLocaleString(
-undefined,
-{
-maximumFractionDigits:0
-}
-);
-
-document.getElementById(
-"drawdown"
-).innerHTML=
-drawdown.toFixed(2)
-+"%";
-
-if(drawdown<0){
-
-document.getElementById(
-"drawdown"
-).className=
-"value negative";
-
-}
-
-    let riskScore=0;
-
-if(nvdaWeight>30)
-riskScore+=3;
-
-if(
-leveragedValue/
-totalValue>0.25
-)
-riskScore+=3;
-
-if(
-bondValue/
-totalValue>0.20
-)
-riskScore+=2;
-
-if(
-aiValue/
-totalValue>0.50
-)
-riskScore+=2;
-
-document.getElementById(
-"riskScore"
-).innerHTML=
-riskScore+"/10";
-
-if(equityChart)
-equityChart.destroy();
-
-equityChart=
-new Chart(
-document.getElementById(
-"equityCurve"
-),
-{
-type:"line",
-
-data:{
-
-labels:
-history.map(
-x=>x.date
-),
-
-datasets:[
-{
-label:"Portfolio",
-
-data:
-history.map(
-x=>x.value
-)
-}
-]
-}
-
-});
-    
     const largest=
     positions[0];
 
