@@ -1,4 +1,4 @@
-const API_KEY = "替换成你的Finnhub新API";
+const API_KEY = "d8rl8t1r01qnkitod980d8rl8t1r01qnkitod98g";
 
 const holdings = [
 
