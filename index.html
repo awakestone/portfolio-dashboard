@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Awakestone Portfolio Dashboard</title>
+<title>Awakestone Portfolio V3</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -21,106 +21,164 @@
 <h1>Awakestone Portfolio</h1>
 
 <div class="subtitle">
-AI Growth & Macro Dashboard
+AI Growth · Leveraged Growth · Macro Allocation
 </div>
 
 </header>
 
-<!-- 第一排：核心资产 -->
+<!-- HERO -->
 
-<section class="grid">
+<section class="hero-card">
 
-<div class="card">
-<h3>总资产 USD</h3>
-<div id="totalUsd" class="value">$0</div>
+<div class="hero-label">
+PORTFOLIO VALUE
 </div>
 
-<div class="card">
-<h3>总资产 CNY</h3>
-<div id="totalCny" class="value">¥0</div>
+<div id="totalUsd" class="hero-value">
+$0.00
 </div>
 
-<div class="card">
-<h3>总浮盈亏</h3>
-<div id="totalPnl" class="value">$0</div>
+<div id="totalCny" class="hero-cny">
+≈ ¥0.00
 </div>
 
-<div class="card">
-<h3>总收益率</h3>
-<div id="totalReturn" class="value">0%</div>
+<div class="hero-stats">
+
+<div>
+
+<div class="hero-small">
+P&L
 </div>
 
-</section>
-
-<!-- 第二排：仓位分析 -->
-
-<section class="grid">
-
-<div class="card">
-<h3>AI仓位</h3>
-<div id="aiWeight" class="value">0%</div>
+<div id="totalPnl" class="hero-number">
+$0.00
 </div>
 
-<div class="card">
-<h3>杠杆仓位</h3>
-<div id="leveragedWeight" class="value">0%</div>
 </div>
 
-<div class="card">
-<h3>债券仓位</h3>
-<div id="bondWeight" class="value">0%</div>
+<div>
+
+<div class="hero-small">
+RETURN
 </div>
 
-<div class="card">
-<h3>现金仓位</h3>
-<div id="cashWeight" class="value">0%</div>
+<div id="totalReturn" class="hero-number">
+0.00%
+</div>
+
+</div>
+
 </div>
 
 </section>
 
-<!-- 风险监控 -->
+<!-- ALLOCATION -->
+
+<section class="metric-grid">
+
+<div class="metric-card">
+
+<div class="metric-title">
+AI
+</div>
+
+<div id="aiWeight" class="metric-value">
+0%
+</div>
+
+</div>
+
+<div class="metric-card">
+
+<div class="metric-title">
+Leveraged
+</div>
+
+<div id="leveragedWeight" class="metric-value">
+0%
+</div>
+
+</div>
+
+<div class="metric-card">
+
+<div class="metric-title">
+Bond
+</div>
+
+<div id="bondWeight" class="metric-value">
+0%
+</div>
+
+</div>
+
+<div class="metric-card">
+
+<div class="metric-title">
+Cash
+</div>
+
+<div id="cashWeight" class="metric-value">
+0%
+</div>
+
+</div>
+
+</section>
+
+<!-- RISK -->
 
 <section class="card">
 
-<h3>风险监控中心</h3>
+<h3>风险监控</h3>
 
-<div id="largestPosition"></div>
+<div class="risk-item">
 
-<br>
+<span>
+最大持仓
+</span>
 
-<div id="nvdaExposure"></div>
-
-<br>
-
-<div id="riskAlerts" class="warning"></div>
-
-</section>
-
-<!-- 图表区域 -->
-
-<section class="grid">
-
-<div class="card">
-
-<h3>持仓占比</h3>
-
-<canvas id="pieChart"></canvas>
+<span id="largestPosition">
+--
+</span>
 
 </div>
 
-<div class="card">
+<div class="risk-item">
+
+<span>
+NVDA占比
+</span>
+
+<span id="nvdaExposure">
+--
+</span>
+
+</div>
+
+<div id="riskAlerts"
+class="risk-alerts">
+</div>
+
+</section>
+
+<!-- CHART -->
+
+<section class="card">
 
 <h3>资产分类</h3>
 
 <canvas id="allocationChart"></canvas>
 
-</div>
-
 </section>
 
-<!-- 持仓表 -->
+<!-- HOLDINGS -->
 
-<section class="table-container">
+<section class="card">
+
+<h3>持仓明细</h3>
+
+<div class="table-container">
 
 <table>
 
@@ -147,7 +205,12 @@ AI Growth & Macro Dashboard
 
 </table>
 
+</div>
+
 </section>
+
+<!-- 保留兼容 -->
+<canvas id="pieChart" style="display:none"></canvas>
 
 <script src="app.js"></script>
 
