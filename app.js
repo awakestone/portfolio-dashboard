@@ -1,24 +1,32 @@
 const API_KEY = "d8rl8t1r01qnkitod980d8rl8t1r01qnkitod98g";
 
 const holdings = [
-
-{symbol:"TQQQ",shares:630,cost:28.01,group:"Leveraged"},
-{symbol:"NVDA",shares:318,cost:69.99,group:"AI"},
-{symbol:"MSFT",shares:88,cost:283.56,group:"AI"},
-{symbol:"TSM",shares:61,cost:178.60,group:"AI"},
-{symbol:"QQQ",shares:38,cost:278.70,group:"Tech"},
-{symbol:"TLT",shares:209,cost:93.88,group:"Bond"},
-{symbol:"AMZN",shares:29,cost:260.65,group:"AI"},
-{symbol:"META",shares:12,cost:334.38,group:"AI"},
-{symbol:"TMF",shares:161,cost:56.62,group:"Leveraged"},
-{symbol:"UPRO",shares:30,cost:63.00,group:"Leveraged"},
-{symbol:"SGOV",shares:40,cost:100.47,group:"Cash"},
-{symbol:"TSLA",shares:2,cost:225.38,group:"Other"}
-
+    {symbol:"TQQQ",shares:630,cost:28.01,group:"Leveraged"},
+    {symbol:"NVDA",shares:318,cost:69.99,group:"AI"},
+    {symbol:"MSFT",shares:88,cost:283.56,group:"AI"},
+    {symbol:"TSM",shares:61,cost:178.60,group:"AI"},
+    {symbol:"QQQ",shares:38,cost:278.70,group:"Tech"},
+    {symbol:"TLT",shares:209,cost:93.88,group:"Bond"},
+    {symbol:"AMZN",shares:29,cost:260.65,group:"AI"},
+    {symbol:"META",shares:12,cost:334.38,group:"AI"},
+    {symbol:"TMF",shares:161,cost:56.62,group:"Leveraged"},
+    {symbol:"UPRO",shares:30,cost:63.00,group:"Leveraged"},
+    {symbol:"SGOV",shares:40,cost:100.47,group:"Cash"},
+    {symbol:"TSLA",shares:2,cost:225.38,group:"Other"}
 ];
 
 let pieChart = null;
 let allocationChart = null;
+
+function formatMoney(value){
+    return value.toLocaleString(
+        undefined,
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+}
 
 async function getUSDCNY(){
 
@@ -26,7 +34,7 @@ async function getUSDCNY(){
 
         const r =
         await fetch(
-        "https://open.er-api.com/v6/latest/USD"
+            "https://open.er-api.com/v6/latest/USD"
         );
 
         const data = await r.json();
@@ -35,7 +43,7 @@ async function getUSDCNY(){
 
     }catch{
 
-        return 7.2;
+        return 7.20;
 
     }
 
@@ -44,33 +52,30 @@ async function getUSDCNY(){
 async function loadPortfolio(){
 
     const tbody =
-    document.getElementById(
-    "portfolioBody"
-    );
+    document.getElementById("portfolioBody");
 
-    tbody.innerHTML="";
+    tbody.innerHTML = "";
 
-    let totalValue=0;
-    let totalCost=0;
-    let totalPnl=0;
+    let totalValue = 0;
+    let totalCost = 0;
+    let totalPnl = 0;
 
-    let aiValue=0;
-    let leveragedValue=0;
-    let bondValue=0;
-    let cashValue=0;
+    let aiValue = 0;
+    let leveragedValue = 0;
+    let bondValue = 0;
+    let cashValue = 0;
 
-    const positions=[];
+    const positions = [];
 
-    const results =
-    await Promise.all(
+    const results = await Promise.all(
 
-        holdings.map(async h=>{
+        holdings.map(async h => {
 
             try{
 
                 const r =
                 await fetch(
-                `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
+                    `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
                 );
 
                 const data =
@@ -96,26 +101,26 @@ async function loadPortfolio(){
 
     results.forEach(item=>{
 
-        const h=item.holding;
-        const price=item.price;
+        const h = item.holding;
+        const price = item.price;
 
-        if(price<=0) return;
+        if(price <= 0) return;
 
-        const marketValue=
-        price*h.shares;
+        const marketValue =
+        price * h.shares;
 
-        const costValue=
-        h.cost*h.shares;
+        const costValue =
+        h.cost * h.shares;
 
-        const pnl=
-        marketValue-costValue;
+        const pnl =
+        marketValue - costValue;
 
-        const returnPct=
-        ((price-h.cost)/h.cost)*100;
+        const returnPct =
+        ((price - h.cost) / h.cost) * 100;
 
-        totalValue+=marketValue;
-        totalCost+=costValue;
-        totalPnl+=pnl;
+        totalValue += marketValue;
+        totalCost += costValue;
+        totalPnl += pnl;
 
         positions.push({
             symbol:h.symbol,
@@ -123,45 +128,49 @@ async function loadPortfolio(){
         });
 
         if(h.group==="AI")
-            aiValue+=marketValue;
+            aiValue += marketValue;
 
         if(h.group==="Leveraged")
-            leveragedValue+=marketValue;
+            leveragedValue += marketValue;
 
         if(h.group==="Bond")
-            bondValue+=marketValue;
+            bondValue += marketValue;
 
         if(h.group==="Cash")
-            cashValue+=marketValue;
+            cashValue += marketValue;
 
-        item.marketValue=marketValue;
-        item.pnl=pnl;
-        item.returnPct=returnPct;
+        item.marketValue = marketValue;
+        item.pnl = pnl;
+        item.returnPct = returnPct;
 
     });
 
+    if(positions.length === 0){
+        return;
+    }
+
     positions.sort(
-    (a,b)=>b.value-a.value
+        (a,b)=>b.value-a.value
     );
 
     results.sort(
-    (a,b)=>
-    (b.marketValue||0)-
-    (a.marketValue||0)
+        (a,b)=>
+        (b.marketValue||0)-
+        (a.marketValue||0)
     );
 
     results.forEach(item=>{
 
         if(!item.marketValue) return;
 
-        const weight=
-        item.marketValue/
-        totalValue*100;
+        const weight =
+        item.marketValue /
+        totalValue * 100;
 
-        const tr=
+        const tr =
         document.createElement("tr");
 
-        tr.innerHTML=`
+        tr.innerHTML = `
 
         <td>${item.holding.symbol}</td>
 
@@ -176,13 +185,11 @@ async function loadPortfolio(){
         ?"positive"
         :"negative"
         }">
-
-        ${item.returnPct.toFixed(1)}%
-
+        ${item.returnPct.toFixed(2)}%
         </td>
 
         <td>
-        $${item.marketValue.toLocaleString()}
+        $${formatMoney(item.marketValue)}
         </td>
 
         <td class="${
@@ -190,9 +197,7 @@ async function loadPortfolio(){
         ?"positive"
         :"negative"
         }">
-
-        $${item.pnl.toLocaleString()}
-
+        $${formatMoney(item.pnl)}
         </td>
 
         <td>
@@ -210,118 +215,106 @@ async function loadPortfolio(){
 
     document.getElementById(
     "totalUsd"
-    ).innerHTML=
-    "$"+
-    totalValue.toLocaleString(
-    undefined,
-    {maximumFractionDigits:0}
-    );
+    ).innerHTML =
+    "$" + formatMoney(totalValue);
 
     document.getElementById(
     "totalCny"
-    ).innerHTML=
-    "¥"+
-    (totalValue*usdCny)
-    .toLocaleString(
-    undefined,
-    {maximumFractionDigits:0}
-    );
+    ).innerHTML =
+    "¥" + formatMoney(totalValue * usdCny);
 
     document.getElementById(
     "totalPnl"
-    ).innerHTML=
-    "$"+
-    totalPnl.toLocaleString(
-    undefined,
-    {maximumFractionDigits:0}
-    );
+    ).innerHTML =
+    "$" + formatMoney(totalPnl);
 
     document.getElementById(
     "totalReturn"
-    ).innerHTML=
+    ).innerHTML =
     (
-    totalPnl/
-    totalCost*
-    100
-    ).toFixed(2)+"%";
+        totalPnl /
+        totalCost *
+        100
+    ).toFixed(2) + "%";
 
     document.getElementById(
     "aiWeight"
-    ).innerHTML=
+    ).innerHTML =
     (
-    aiValue/
-    totalValue*
-    100
-    ).toFixed(1)+"%";
+        aiValue /
+        totalValue *
+        100
+    ).toFixed(2) + "%";
 
     document.getElementById(
     "leveragedWeight"
-    ).innerHTML=
+    ).innerHTML =
     (
-    leveragedValue/
-    totalValue*
-    100
-    ).toFixed(1)+"%";
+        leveragedValue /
+        totalValue *
+        100
+    ).toFixed(2) + "%";
 
     document.getElementById(
     "bondWeight"
-    ).innerHTML=
+    ).innerHTML =
     (
-    bondValue/
-    totalValue*
-    100
-    ).toFixed(1)+"%";
+        bondValue /
+        totalValue *
+        100
+    ).toFixed(2) + "%";
 
     document.getElementById(
     "cashWeight"
-    ).innerHTML=
+    ).innerHTML =
     (
-    cashValue/
-    totalValue*
-    100
-    ).toFixed(1)+"%";
+        cashValue /
+        totalValue *
+        100
+    ).toFixed(2) + "%";
 
-    const largest=
+    const largest =
     positions[0];
 
     document.getElementById(
     "largestPosition"
-    ).innerHTML=
-    "最大持仓："+largest.symbol;
+    ).innerHTML =
+    "最大持仓：" + largest.symbol;
 
-    const nvda=
+    const nvda =
     positions.find(
-    x=>x.symbol==="NVDA"
+        x=>x.symbol==="NVDA"
     );
 
-    const nvdaWeight=
-    nvda.value/
-    totalValue*
-    100;
+    const nvdaWeight =
+    nvda
+    ? nvda.value / totalValue * 100
+    : 0;
 
     document.getElementById(
     "nvdaExposure"
-    ).innerHTML=
-    "NVDA占比："+nvdaWeight.toFixed(1)+"%";
+    ).innerHTML =
+    "NVDA占比：" +
+    nvdaWeight.toFixed(2) + "%";
 
-    let alerts=[];
+    let alerts = [];
 
-    if(nvdaWeight>35)
+    if(nvdaWeight > 35)
         alerts.push(
         "⚠ NVDA仓位超过35%"
         );
 
     if(
-    leveragedValue/
-    totalValue>0.4
+        leveragedValue /
+        totalValue > 0.40
     )
         alerts.push(
         "⚠ 杠杆仓位超过40%"
         );
 
     if(
-    bondValue/
-    totalValue>0.3
+        bondValue /
+        totalValue > 0.30
     )
         alerts.push(
         "⚠ 利率暴露过高"
@@ -329,68 +322,77 @@ async function loadPortfolio(){
 
     document.getElementById(
     "riskAlerts"
-    ).innerHTML=
-    alerts.join("<br>");
+    ).innerHTML =
+    alerts.length
+    ? alerts.join("<br>")
+    : "暂无风险警报";
 
     if(pieChart)
         pieChart.destroy();
 
-    pieChart=
+    pieChart =
     new Chart(
-    document.getElementById(
-    "pieChart"
-    ),
-    {
-        type:"pie",
-        data:{
-            labels:
-            positions.map(
-            x=>x.symbol
-            ),
-            datasets:[
-            {
-                data:
+        document.getElementById("pieChart"),
+        {
+            type:"pie",
+            data:{
+                labels:
                 positions.map(
-                x=>x.value
-                )
-            }]
+                    x=>x.symbol
+                ),
+                datasets:[
+                {
+                    data:
+                    positions.map(
+                        x=>x.value
+                    )
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false
+            }
         }
-    });
+    );
 
     if(allocationChart)
         allocationChart.destroy();
 
-    allocationChart=
+    allocationChart =
     new Chart(
-    document.getElementById(
-    "allocationChart"
-    ),
-    {
-        type:"doughnut",
-        data:{
-            labels:[
-            "AI",
-            "Leveraged",
-            "Bond",
-            "Cash"
-            ],
-            datasets:[
-            {
-                data:[
-                aiValue,
-                leveragedValue,
-                bondValue,
-                cashValue
-                ]
-            }]
+        document.getElementById("allocationChart"),
+        {
+            type:"doughnut",
+            data:{
+                labels:[
+                    "AI",
+                    "Leveraged",
+                    "Bond",
+                    "Cash"
+                ],
+                datasets:[
+                {
+                    data:[
+                        aiValue,
+                        leveragedValue,
+                        bondValue,
+                        cashValue
+                    ]
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false
+            }
         }
-    });
+    );
 
 }
 
 loadPortfolio();
 
 setInterval(
-loadPortfolio,
-60000
+    loadPortfolio,
+    60000
 );
+```
