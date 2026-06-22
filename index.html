@@ -16,7 +16,11 @@
 
 <body>
 
-<h1>投资组合仪表盘 V2</h1>
+<h1>Awakestone Portfolio</h1>
+
+<div class="subtitle">
+AI Growth & Macro Dashboard
+</div>
 
 <div class="grid">
 
@@ -71,10 +75,12 @@
 <h3>风险监控</h3>
 
 <div id="largestPosition"></div>
+<br>
 
 <div id="nvdaExposure"></div>
+<br>
 
-<div id="riskAlerts"></div>
+<div id="riskAlerts" class="warning"></div>
 
 </div>
 
@@ -103,9 +109,17 @@
 
 </table>
 
-<canvas id="pieChart"></canvas>
+<div class="grid">
 
+<div class="card">
+<canvas id="pieChart"></canvas>
+</div>
+
+<div class="card">
 <canvas id="allocationChart"></canvas>
+</div>
+
+</div>
 
 <script src="app.js"></script>
 
