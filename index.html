@@ -8,12 +8,9 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1">
 
-<title>
-Awakestone Portfolio V3.1
-</title>
+<title>Awakestone Portfolio V4</title>
 
-<link rel="stylesheet"
-href="style.css">
+<link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -23,12 +20,14 @@ href="style.css">
 
 <header>
 
-<h1>
-Awakestone Portfolio
-</h1>
+<h1>Awakestone Portfolio</h1>
 
 <div class="subtitle">
 AI Growth · Leveraged Growth · Macro Allocation
+</div>
+
+<div id="lastUpdate" class="update-time">
+更新时间 --:--
 </div>
 
 </header>
@@ -41,13 +40,11 @@ AI Growth · Leveraged Growth · Macro Allocation
 PORTFOLIO VALUE
 </div>
 
-<div id="totalUsd"
-class="hero-value">
+<div id="totalUsd" class="hero-value">
 $0.00
 </div>
 
-<div id="totalCny"
-class="hero-cny">
+<div id="totalCny" class="hero-cny">
 ≈ ¥0.00
 </div>
 
@@ -88,89 +85,23 @@ class="hero-number">
 <section class="metric-grid">
 
 <div class="metric-card">
-
-<div class="metric-title">
-AI
-</div>
-
-<div id="aiWeight"
-class="metric-value">
-0%
-</div>
-
+<div class="metric-title">AI</div>
+<div id="aiWeight" class="metric-value">0%</div>
 </div>
 
 <div class="metric-card">
-
-<div class="metric-title">
-Leveraged
-</div>
-
-<div id="leveragedWeight"
-class="metric-value">
-0%
-</div>
-
+<div class="metric-title">Leveraged</div>
+<div id="leveragedWeight" class="metric-value">0%</div>
 </div>
 
 <div class="metric-card">
-
-<div class="metric-title">
-Bond
-</div>
-
-<div id="bondWeight"
-class="metric-value">
-0%
-</div>
-
+<div class="metric-title">Bond</div>
+<div id="bondWeight" class="metric-value">0%</div>
 </div>
 
 <div class="metric-card">
-
-<div class="metric-title">
-Cash
-</div>
-
-<div id="cashWeight"
-class="metric-value">
-0%
-</div>
-
-</div>
-
-</section>
-
-<!-- RISK -->
-
-<section class="card">
-
-<h3>
-风险监控
-</h3>
-
-<div class="risk-item">
-
-<span>最大持仓</span>
-
-<span id="largestPosition">
---
-</span>
-
-</div>
-
-<div class="risk-item">
-
-<span>NVDA占比</span>
-
-<span id="nvdaExposure">
---
-</span>
-
-</div>
-
-<div id="riskAlerts"
-class="risk-alerts">
+<div class="metric-title">Cash</div>
+<div id="cashWeight" class="metric-value">0%</div>
 </div>
 
 </section>
@@ -179,12 +110,35 @@ class="risk-alerts">
 
 <section class="card">
 
-<h3>
-TOP HOLDINGS
-</h3>
+<h3>TOP HOLDINGS</h3>
 
-<div id="topHoldings">
+<div id="topHoldings"></div>
 
+</section>
+
+<!-- RISK -->
+
+<section class="card">
+
+<h3>风险监控</h3>
+
+<div class="risk-item">
+<span>最大持仓</span>
+<span id="largestPosition">--</span>
+</div>
+
+<div class="risk-item">
+<span>NVDA占比</span>
+<span id="nvdaExposure">--</span>
+</div>
+
+<div class="risk-item">
+<span>前3大持仓</span>
+<span id="top3Exposure">--</span>
+</div>
+
+<div id="riskAlerts"
+class="risk-alerts">
 </div>
 
 </section>
@@ -193,35 +147,27 @@ TOP HOLDINGS
 
 <section class="card">
 
-<h3>
-资产分类
-</h3>
+<h3>资产分类</h3>
 
 <canvas id="allocationChart"></canvas>
 
 </section>
 
-<!-- MOBILE CARDS -->
+<!-- MOBILE -->
 
 <section class="card mobile-only">
 
-<h3>
-持仓卡片
-</h3>
+<h3>持仓卡片</h3>
 
-<div id="holdingCards">
-
-</div>
+<div id="holdingCards"></div>
 
 </section>
 
-<!-- DESKTOP TABLE -->
+<!-- DESKTOP -->
 
 <section class="card desktop-only">
 
-<h3>
-持仓明细
-</h3>
+<h3>持仓明细</h3>
 
 <div class="table-container">
 
@@ -230,7 +176,6 @@ TOP HOLDINGS
 <thead>
 
 <tr>
-
 <th>代码</th>
 <th>股数</th>
 <th>成本</th>
@@ -239,7 +184,6 @@ TOP HOLDINGS
 <th>市值</th>
 <th>盈亏</th>
 <th>占比</th>
-
 </tr>
 
 </thead>
