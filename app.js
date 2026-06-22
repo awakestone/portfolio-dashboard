@@ -51,7 +51,7 @@ async function loadPortfolio(){
     let totalValue = 0;
     let totalCost = 0;
     let totalPnl = 0;
-
+    let todayPnl = 0;
     let aiValue = 0;
     let leveragedValue = 0;
     let bondValue = 0;
@@ -69,7 +69,8 @@ async function loadPortfolio(){
 
                 return {
                     holding:h,
-                    price:Number(data.c || 0)
+                    price:Number(data.c || 0),
+                    previous:Number(data.pc || 0)
                 };
 
             }catch{
@@ -85,19 +86,19 @@ async function loadPortfolio(){
 
         const h = item.holding;
         const price = item.price;
-
+        const previous = item.previous || price;
         if(price <= 0) return;
 
         const marketValue = price * h.shares;
         const costValue = h.cost * h.shares;
         const pnl = marketValue - costValue;
-
+        const dayPnl =(price - previous)*h.shares;
         const returnPct = ((price - h.cost) / h.cost) * 100;
 
         totalValue += marketValue;
         totalCost += costValue;
         totalPnl += pnl;
-
+        todayPnl += dayPnl;
         positions.push({
             symbol:h.symbol,
             value:marketValue
@@ -242,7 +243,10 @@ async function loadPortfolio(){
 
     document.getElementById("totalCny").innerHTML =
         "≈ ¥" + formatMoney(totalValue * usdCny);
-
+    
+    document.getElementById("todayPnl").innerHTML =
+        "$" +formatMoney(todayPnl);
+    
     document.getElementById("totalPnl").innerHTML =
         "$" + formatMoney(totalPnl);
 
