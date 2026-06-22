@@ -24,9 +24,8 @@ h1{
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-    margin-bottom:20px;
+    grid-template-columns:1fr;
+    gap:16px;
 }
 
 .card{
@@ -114,7 +113,14 @@ canvas{
     margin-top:12px;
     line-height:1.8;
 }
+@media(min-width:768px){
 
+.grid{
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+}
+
+}
 @media(max-width:768px){
 
     body{
