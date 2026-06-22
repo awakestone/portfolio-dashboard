@@ -4,11 +4,16 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Awakestone Portfolio V3</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="style.css">
+<title>
+Awakestone Portfolio V3.1
+</title>
+
+<link rel="stylesheet"
+href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -18,7 +23,9 @@
 
 <header>
 
-<h1>Awakestone Portfolio</h1>
+<h1>
+Awakestone Portfolio
+</h1>
 
 <div class="subtitle">
 AI Growth · Leveraged Growth · Macro Allocation
@@ -34,11 +41,13 @@ AI Growth · Leveraged Growth · Macro Allocation
 PORTFOLIO VALUE
 </div>
 
-<div id="totalUsd" class="hero-value">
+<div id="totalUsd"
+class="hero-value">
 $0.00
 </div>
 
-<div id="totalCny" class="hero-cny">
+<div id="totalCny"
+class="hero-cny">
 ≈ ¥0.00
 </div>
 
@@ -50,7 +59,8 @@ $0.00
 P&L
 </div>
 
-<div id="totalPnl" class="hero-number">
+<div id="totalPnl"
+class="hero-number">
 $0.00
 </div>
 
@@ -62,7 +72,8 @@ $0.00
 RETURN
 </div>
 
-<div id="totalReturn" class="hero-number">
+<div id="totalReturn"
+class="hero-number">
 0.00%
 </div>
 
@@ -82,7 +93,8 @@ RETURN
 AI
 </div>
 
-<div id="aiWeight" class="metric-value">
+<div id="aiWeight"
+class="metric-value">
 0%
 </div>
 
@@ -94,7 +106,8 @@ AI
 Leveraged
 </div>
 
-<div id="leveragedWeight" class="metric-value">
+<div id="leveragedWeight"
+class="metric-value">
 0%
 </div>
 
@@ -106,7 +119,8 @@ Leveraged
 Bond
 </div>
 
-<div id="bondWeight" class="metric-value">
+<div id="bondWeight"
+class="metric-value">
 0%
 </div>
 
@@ -118,7 +132,8 @@ Bond
 Cash
 </div>
 
-<div id="cashWeight" class="metric-value">
+<div id="cashWeight"
+class="metric-value">
 0%
 </div>
 
@@ -130,13 +145,13 @@ Cash
 
 <section class="card">
 
-<h3>风险监控</h3>
+<h3>
+风险监控
+</h3>
 
 <div class="risk-item">
 
-<span>
-最大持仓
-</span>
+<span>最大持仓</span>
 
 <span id="largestPosition">
 --
@@ -146,9 +161,7 @@ Cash
 
 <div class="risk-item">
 
-<span>
-NVDA占比
-</span>
+<span>NVDA占比</span>
 
 <span id="nvdaExposure">
 --
@@ -162,21 +175,53 @@ class="risk-alerts">
 
 </section>
 
+<!-- TOP HOLDINGS -->
+
+<section class="card">
+
+<h3>
+TOP HOLDINGS
+</h3>
+
+<div id="topHoldings">
+
+</div>
+
+</section>
+
 <!-- CHART -->
 
 <section class="card">
 
-<h3>资产分类</h3>
+<h3>
+资产分类
+</h3>
 
 <canvas id="allocationChart"></canvas>
 
 </section>
 
-<!-- HOLDINGS -->
+<!-- MOBILE CARDS -->
 
-<section class="card">
+<section class="card mobile-only">
 
-<h3>持仓明细</h3>
+<h3>
+持仓卡片
+</h3>
+
+<div id="holdingCards">
+
+</div>
+
+</section>
+
+<!-- DESKTOP TABLE -->
+
+<section class="card desktop-only">
+
+<h3>
+持仓明细
+</h3>
 
 <div class="table-container">
 
@@ -208,9 +253,6 @@ class="risk-alerts">
 </div>
 
 </section>
-
-<!-- 保留兼容 -->
-<canvas id="pieChart" style="display:none"></canvas>
 
 <script src="app.js"></script>
 
