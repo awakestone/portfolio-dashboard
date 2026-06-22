@@ -50,7 +50,15 @@ h1{
     font-size:30px;
     font-weight:700;
 }
+.table-container{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
 
+table{
+    min-width:900px;
+}
 table{
     width:100%;
     border-collapse:collapse;
@@ -121,3 +129,4 @@ canvas{
         font-size:13px;
     }
 }
+
