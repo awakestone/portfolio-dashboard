@@ -1,5 +1,4 @@
 const API_KEY = "d8rl8t1r01qnkitod980d8rl8t1r01qnkitod98g";
-
 const holdings = [
     {symbol:"TQQQ",shares:630,cost:28.01,group:"Leveraged"},
     {symbol:"NVDA",shares:318,cost:69.99,group:"AI"},
@@ -17,46 +16,37 @@ const holdings = [
 
 let allocationChart = null;
 
-function formatMoney(value){
-    return value.toLocaleString(
-        undefined,
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-        }
-    );
+function formatMoney(v){
+    return Number(v || 0).toLocaleString(undefined,{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    });
 }
 
 async function getUSDCNY(){
-
     try{
-
-        const r =
-        await fetch(
-            "https://open.er-api.com/v6/latest/USD"
-        );
-
-        const data =
-        await r.json();
-
-        return data.rates.CNY;
-
+        const r = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await r.json();
+        return data.rates.CNY || 7.2;
     }catch{
-
-        return 7.20;
-
+        return 7.2;
     }
+}
 
+function clearContainers(){
+    const tbody = document.getElementById("portfolioBody");
+    if(tbody) tbody.innerHTML = "";
+
+    const cards = document.getElementById("holdingCards");
+    if(cards) cards.innerHTML = "";
+
+    const top = document.getElementById("topHoldings");
+    if(top) top.innerHTML = "";
 }
 
 async function loadPortfolio(){
 
-    const tbody =
-    document.getElementById(
-    "portfolioBody"
-    );
-
-    tbody.innerHTML = "";
+    clearContainers();
 
     let totalValue = 0;
     let totalCost = 0;
@@ -70,61 +60,39 @@ async function loadPortfolio(){
     const positions = [];
 
     const results = await Promise.all(
-
         holdings.map(async h => {
-
             try{
-
-                const r =
-                await fetch(
-                `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
+                const r = await fetch(
+                    `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
                 );
-
-                const data =
-                await r.json();
+                const data = await r.json();
 
                 return {
                     holding:h,
-                    price:Number(data.c)
+                    price:Number(data.c || 0)
                 };
 
             }catch{
-
                 return {
                     holding:h,
                     price:0
                 };
-
             }
-
         })
-
     );
 
-    results.forEach(item=>{
+    results.forEach(item => {
 
-        const h =
-        item.holding;
-
-        const price =
-        item.price;
+        const h = item.holding;
+        const price = item.price;
 
         if(price <= 0) return;
 
-        const marketValue =
-        price * h.shares;
+        const marketValue = price * h.shares;
+        const costValue = h.cost * h.shares;
+        const pnl = marketValue - costValue;
 
-        const costValue =
-        h.cost * h.shares;
-
-        const pnl =
-        marketValue - costValue;
-
-        const returnPct =
-        (
-        (price - h.cost)
-        / h.cost
-        ) * 100;
+        const returnPct = ((price - h.cost) / h.cost) * 100;
 
         totalValue += marketValue;
         totalCost += costValue;
@@ -135,343 +103,245 @@ async function loadPortfolio(){
             value:marketValue
         });
 
-        if(h.group==="AI")
-            aiValue += marketValue;
+        if(h.group==="AI") aiValue += marketValue;
+        if(h.group==="Leveraged") leveragedValue += marketValue;
+        if(h.group==="Bond") bondValue += marketValue;
+        if(h.group==="Cash") cashValue += marketValue;
 
-        if(h.group==="Leveraged")
-            leveragedValue += marketValue;
-
-        if(h.group==="Bond")
-            bondValue += marketValue;
-
-        if(h.group==="Cash")
-            cashValue += marketValue;
-
-        item.marketValue =
-        marketValue;
-
-        item.pnl =
-        pnl;
-
-        item.returnPct =
-        returnPct;
-
+        item.marketValue = marketValue;
+        item.pnl = pnl;
+        item.returnPct = returnPct;
     });
 
-    if(totalValue===0)
-        return;
+    if(totalValue <= 0) return;
 
-    positions.sort(
-    (a,b)=>b.value-a.value
-    );
+    positions.sort((a,b)=>b.value-a.value);
+    results.sort((a,b)=>(b.marketValue||0)-(a.marketValue||0));
 
-    results.sort(
-    (a,b)=>
-    (b.marketValue||0)
-    -
-    (a.marketValue||0)
-    );
+    const tbody = document.getElementById("portfolioBody");
+    const cards = document.getElementById("holdingCards");
+    const top = document.getElementById("topHoldings");
 
-    results.forEach(item=>{
+    let top3Exposure = 0;
 
-        if(!item.marketValue)
-            return;
+    results.forEach(item => {
 
-        const weight =
-        item.marketValue
-        /
-        totalValue
-        *
-        100;
+        if(!item.marketValue) return;
 
-        const tr =
-        document.createElement(
-        "tr"
-        );
+        const weight = item.marketValue / totalValue * 100;
 
-        tr.innerHTML = `
+        top3Exposure += weight;
 
-        <td>${item.holding.symbol}</td>
+        // TABLE
+        if(tbody){
 
-        <td>${item.holding.shares}</td>
+            const tr = document.createElement("tr");
 
-        <td>${item.holding.cost.toFixed(2)}</td>
+            tr.innerHTML = `
+                <td>${item.holding.symbol}</td>
+                <td>${item.holding.shares}</td>
+                <td>${item.holding.cost.toFixed(2)}</td>
+                <td>${item.price.toFixed(2)}</td>
+                <td class="${item.returnPct>=0?'positive':'negative'}">
+                    ${item.returnPct.toFixed(2)}%
+                </td>
+                <td>$${formatMoney(item.marketValue)}</td>
+                <td class="${item.pnl>=0?'positive':'negative'}">
+                    $${formatMoney(item.pnl)}
+                </td>
+                <td>${weight.toFixed(2)}%</td>
+            `;
 
-        <td>${item.price.toFixed(2)}</td>
+            tbody.appendChild(tr);
+        }
 
-        <td class="${
-        item.returnPct>=0
-        ? "positive"
-        : "negative"
-        }">
+        // MOBILE CARDS
+        if(cards){
 
-        ${item.returnPct.toFixed(2)}%
+            const card = document.createElement("div");
+            card.className = "holding-card";
 
-        </td>
+            card.innerHTML = `
+                <div class="holding-header">
+                    <div class="symbol">${item.holding.symbol}</div>
+                    <div class="shares">${item.holding.shares} 股</div>
+                </div>
 
-        <td>
+                <div class="holding-grid">
 
-        $${formatMoney(
-        item.marketValue
-        )}
+                    <div>
+                        <div class="holding-label">现价</div>
+                        <div class="holding-value">$${item.price.toFixed(2)}</div>
+                    </div>
 
-        </td>
+                    <div>
+                        <div class="holding-label">成本</div>
+                        <div class="holding-value">$${item.holding.cost.toFixed(2)}</div>
+                    </div>
 
-        <td class="${
-        item.pnl>=0
-        ? "positive"
-        : "negative"
-        }">
+                    <div>
+                        <div class="holding-label">收益率</div>
+                        <div class="holding-value ${item.returnPct>=0?'positive':'negative'}">
+                            ${item.returnPct.toFixed(2)}%
+                        </div>
+                    </div>
 
-        $${formatMoney(
-        item.pnl
-        )}
+                    <div>
+                        <div class="holding-label">占比</div>
+                        <div class="holding-value">${weight.toFixed(2)}%</div>
+                    </div>
 
-        </td>
+                    <div>
+                        <div class="holding-label">市值</div>
+                        <div class="holding-value">$${formatMoney(item.marketValue)}</div>
+                    </div>
 
-        <td>
+                    <div>
+                        <div class="holding-label">盈亏</div>
+                        <div class="holding-value ${item.pnl>=0?'positive':'negative'}">
+                            $${formatMoney(item.pnl)}
+                        </div>
+                    </div>
 
-        ${weight.toFixed(2)}%
+                </div>
+            `;
 
-        </td>
-
-        `;
-
-        tbody.appendChild(
-        tr
-        );
-
+            cards.appendChild(card);
+        }
     });
 
-    const usdCny =
-    await getUSDCNY();
+    // TOP HOLDINGS
+    if(top){
 
-    document.getElementById(
-    "totalUsd"
-    ).innerHTML =
-    "$" +
-    formatMoney(
-    totalValue
-    );
+        positions.slice(0,5).forEach(p => {
 
-    document.getElementById(
-    "totalCny"
-    ).innerHTML =
-    "≈ ¥" +
-    formatMoney(
-    totalValue * usdCny
-    );
+            const w = p.value / totalValue * 100;
 
-    document.getElementById(
-    "totalPnl"
-    ).innerHTML =
-    "$" +
-    formatMoney(
-    totalPnl
-    );
+            const div = document.createElement("div");
+            div.className = "top-item";
 
-    document.getElementById(
-    "totalReturn"
-    ).innerHTML =
-    (
-    totalPnl
-    /
-    totalCost
-    *
-    100
-    ).toFixed(2)
-    + "%";
+            div.innerHTML = `
+                <div class="top-row">
+                    <span class="top-symbol">${p.symbol}</span>
+                    <span class="top-weight">${w.toFixed(2)}%</span>
+                </div>
 
-    document.getElementById(
-    "aiWeight"
-    ).innerHTML =
-    (
-    aiValue
-    /
-    totalValue
-    *
-    100
-    ).toFixed(2)
-    + "%";
+                <div class="top-bar">
+                    <div class="top-fill" style="width:${w}%"></div>
+                </div>
+            `;
 
-    document.getElementById(
-    "leveragedWeight"
-    ).innerHTML =
-    (
-    leveragedValue
-    /
-    totalValue
-    *
-    100
-    ).toFixed(2)
-    + "%";
+            top.appendChild(div);
+        });
+    }
 
-    document.getElementById(
-    "bondWeight"
-    ).innerHTML =
-    (
-    bondValue
-    /
-    totalValue
-    *
-    100
-    ).toFixed(2)
-    + "%";
+    const usdCny = await getUSDCNY();
 
-    document.getElementById(
-    "cashWeight"
-    ).innerHTML =
-    (
-    cashValue
-    /
-    totalValue
-    *
-    100
-    ).toFixed(2)
-    + "%";
+    document.getElementById("totalUsd").innerHTML =
+        "$" + formatMoney(totalValue);
 
-    const largest =
-    positions[0];
+    document.getElementById("totalCny").innerHTML =
+        "≈ ¥" + formatMoney(totalValue * usdCny);
 
-    document.getElementById(
-    "largestPosition"
-    ).innerHTML =
-    largest.symbol;
+    document.getElementById("totalPnl").innerHTML =
+        "$" + formatMoney(totalPnl);
 
-    const nvda =
-    positions.find(
-    x=>x.symbol==="NVDA"
-    );
+    document.getElementById("totalReturn").innerHTML =
+        (totalPnl / totalCost * 100).toFixed(2) + "%";
 
-    const nvdaWeight =
-    nvda
-    ?
-    nvda.value
-    /
-    totalValue
-    *
-    100
-    : 0;
+    document.getElementById("aiWeight").innerHTML =
+        (aiValue / totalValue * 100).toFixed(2) + "%";
 
-    document.getElementById(
-    "nvdaExposure"
-    ).innerHTML =
-    nvdaWeight.toFixed(2)
-    + "%";
+    document.getElementById("leveragedWeight").innerHTML =
+        (leveragedValue / totalValue * 100).toFixed(2) + "%";
+
+    document.getElementById("bondWeight").innerHTML =
+        (bondValue / totalValue * 100).toFixed(2) + "%";
+
+    document.getElementById("cashWeight").innerHTML =
+        (cashValue / totalValue * 100).toFixed(2) + "%";
+
+    const largest = positions[0];
+    document.getElementById("largestPosition").innerHTML =
+        largest ? largest.symbol : "--";
+
+    const nvda = positions.find(x => x.symbol==="NVDA");
+
+    const nvdaWeight = nvda
+        ? nvda.value / totalValue * 100
+        : 0;
+
+    document.getElementById("nvdaExposure").innerHTML =
+        nvdaWeight.toFixed(2) + "%";
+
+    document.getElementById("top3Exposure").innerHTML =
+        top3Exposure.toFixed(2) + "%";
 
     let alerts = [];
 
-    if(nvdaWeight>35)
-        alerts.push(
-        "⚠ NVDA仓位超过35%"
-        );
+    if(nvdaWeight > 35)
+        alerts.push("⚠ NVDA仓位过高");
 
-    if(
-    leveragedValue
-    /
-    totalValue
-    > 0.40
-    )
-        alerts.push(
-        "⚠ 杠杆仓位超过40%"
-        );
+    if(leveragedValue / totalValue > 0.4)
+        alerts.push("⚠ 杠杆仓位过高");
 
-    if(
-    bondValue
-    /
-    totalValue
-    > 0.30
-    )
-        alerts.push(
-        "⚠ 利率暴露过高"
-        );
+    if(bondValue / totalValue > 0.3)
+        alerts.push("⚠ 债券暴露偏高");
 
-    document.getElementById(
-    "riskAlerts"
-    ).innerHTML =
-    alerts.length
-    ?
-    alerts.map(
-    x=>`<div>${x}</div>`
-    ).join("")
-    :
-    `<div style="background:#14532d;color:#bbf7d0;padding:10px 14px;border-radius:12px;">✓ 暂无风险警报</div>`;
+    const alertBox = document.getElementById("riskAlerts");
+
+    if(alertBox){
+
+        alertBox.innerHTML = alerts.length
+            ? alerts.map(x=>`<div>${x}</div>`).join("")
+            : `<div style="background:#14532d;color:#bbf7d0;padding:10px 14px;border-radius:12px;">✓ 风险正常</div>`;
+    }
 
     if(allocationChart)
         allocationChart.destroy();
 
-    allocationChart =
-    new Chart(
-    document.getElementById(
-    "allocationChart"
-    ),
-    {
-        type:"doughnut",
-
-        data:{
-
-            labels:[
-                "AI",
-                "Leveraged",
-                "Bond",
-                "Cash"
-            ],
-
-            datasets:[
-            {
-
-                data:[
-                    aiValue,
-                    leveragedValue,
-                    bondValue,
-                    cashValue
-                ],
-
-                backgroundColor:[
-                    "#2563eb",
-                    "#7c3aed",
-                    "#f59e0b",
-                    "#22c55e"
-                ],
-
-                borderWidth:0
-
-            }]
-        },
-
-        options:{
-
-            responsive:true,
-
-            maintainAspectRatio:false,
-
-            plugins:{
-
-                legend:{
-
-                    position:"bottom",
-
-                    labels:{
-
-                        color:"#f8fafc",
-
-                        padding:20
-
+    allocationChart = new Chart(
+        document.getElementById("allocationChart"),
+        {
+            type:"doughnut",
+            data:{
+                labels:["AI","Leveraged","Bond","Cash"],
+                datasets:[{
+                    data:[
+                        aiValue,
+                        leveragedValue,
+                        bondValue,
+                        cashValue
+                    ],
+                    backgroundColor:[
+                        "#2563eb",
+                        "#7c3aed",
+                        "#f59e0b",
+                        "#22c55e"
+                    ],
+                    borderWidth:0
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{
+                        position:"bottom",
+                        labels:{color:"#f8fafc"}
                     }
-
                 }
-
             }
-
         }
+    );
 
-    });
-
+    const update = document.getElementById("lastUpdate");
+    if(update){
+        update.innerHTML =
+        "更新时间 " +
+        new Date().toLocaleTimeString("zh-CN");
+    }
 }
 
 loadPortfolio();
-
-setInterval(
-loadPortfolio,
-60000
-);
+setInterval(loadPortfolio, 60000);
