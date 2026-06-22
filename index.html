@@ -4,9 +4,9 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Awakestone Portfolio Dashboard V2</title>
+<title>Awakestone Portfolio Dashboard</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -16,13 +16,19 @@
 
 <body>
 
+<header>
+
 <h1>Awakestone Portfolio</h1>
 
 <div class="subtitle">
 AI Growth & Macro Dashboard
 </div>
 
-<div class="grid">
+</header>
+
+<!-- 第一排：核心资产 -->
+
+<section class="grid">
 
 <div class="card">
 <h3>总资产 USD</h3>
@@ -44,9 +50,11 @@ AI Growth & Macro Dashboard
 <div id="totalReturn" class="value">0%</div>
 </div>
 
-</div>
+</section>
 
-<div class="grid">
+<!-- 第二排：仓位分析 -->
+
+<section class="grid">
 
 <div class="card">
 <h3>AI仓位</h3>
@@ -68,22 +76,52 @@ AI Growth & Macro Dashboard
 <div id="cashWeight" class="value">0%</div>
 </div>
 
-</div>
+</section>
 
-<div class="card">
+<!-- 风险监控 -->
 
-<h3>风险监控</h3>
+<section class="card">
+
+<h3>风险监控中心</h3>
 
 <div id="largestPosition"></div>
+
 <br>
 
 <div id="nvdaExposure"></div>
+
 <br>
 
 <div id="riskAlerts" class="warning"></div>
 
+</section>
+
+<!-- 图表区域 -->
+
+<section class="grid">
+
+<div class="card">
+
+<h3>持仓占比</h3>
+
+<canvas id="pieChart"></canvas>
+
 </div>
-<div class="table-container">
+
+<div class="card">
+
+<h3>资产分类</h3>
+
+<canvas id="allocationChart"></canvas>
+
+</div>
+
+</section>
+
+<!-- 持仓表 -->
+
+<section class="table-container">
+
 <table>
 
 <thead>
@@ -108,18 +146,8 @@ AI Growth & Macro Dashboard
 </tbody>
 
 </table>
-</div>
-<div class="grid">
 
-<div class="card">
-<canvas id="pieChart"></canvas>
-</div>
-
-<div class="card">
-<canvas id="allocationChart"></canvas>
-</div>
-
-</div>
+</section>
 
 <script src="app.js"></script>
 
