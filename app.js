@@ -15,7 +15,6 @@ const holdings = [
     {symbol:"TSLA",shares:2,cost:225.38,group:"Other"}
 ];
 
-let pieChart = null;
 let allocationChart = null;
 
 function formatMoney(value){
@@ -37,7 +36,8 @@ async function getUSDCNY(){
             "https://open.er-api.com/v6/latest/USD"
         );
 
-        const data = await r.json();
+        const data =
+        await r.json();
 
         return data.rates.CNY;
 
@@ -52,7 +52,9 @@ async function getUSDCNY(){
 async function loadPortfolio(){
 
     const tbody =
-    document.getElementById("portfolioBody");
+    document.getElementById(
+    "portfolioBody"
+    );
 
     tbody.innerHTML = "";
 
@@ -75,7 +77,7 @@ async function loadPortfolio(){
 
                 const r =
                 await fetch(
-                    `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
+                `https://finnhub.io/api/v1/quote?symbol=${h.symbol}&token=${API_KEY}`
                 );
 
                 const data =
@@ -101,8 +103,11 @@ async function loadPortfolio(){
 
     results.forEach(item=>{
 
-        const h = item.holding;
-        const price = item.price;
+        const h =
+        item.holding;
+
+        const price =
+        item.price;
 
         if(price <= 0) return;
 
@@ -116,7 +121,10 @@ async function loadPortfolio(){
         marketValue - costValue;
 
         const returnPct =
-        ((price - h.cost) / h.cost) * 100;
+        (
+        (price - h.cost)
+        / h.cost
+        ) * 100;
 
         totalValue += marketValue;
         totalCost += costValue;
@@ -139,36 +147,47 @@ async function loadPortfolio(){
         if(h.group==="Cash")
             cashValue += marketValue;
 
-        item.marketValue = marketValue;
-        item.pnl = pnl;
-        item.returnPct = returnPct;
+        item.marketValue =
+        marketValue;
+
+        item.pnl =
+        pnl;
+
+        item.returnPct =
+        returnPct;
 
     });
 
-    if(positions.length === 0){
+    if(totalValue===0)
         return;
-    }
 
     positions.sort(
-        (a,b)=>b.value-a.value
+    (a,b)=>b.value-a.value
     );
 
     results.sort(
-        (a,b)=>
-        (b.marketValue||0)-
-        (a.marketValue||0)
+    (a,b)=>
+    (b.marketValue||0)
+    -
+    (a.marketValue||0)
     );
 
     results.forEach(item=>{
 
-        if(!item.marketValue) return;
+        if(!item.marketValue)
+            return;
 
         const weight =
-        item.marketValue /
-        totalValue * 100;
+        item.marketValue
+        /
+        totalValue
+        *
+        100;
 
         const tr =
-        document.createElement("tr");
+        document.createElement(
+        "tr"
+        );
 
         tr.innerHTML = `
 
@@ -182,31 +201,45 @@ async function loadPortfolio(){
 
         <td class="${
         item.returnPct>=0
-        ?"positive"
-        :"negative"
+        ? "positive"
+        : "negative"
         }">
+
         ${item.returnPct.toFixed(2)}%
+
         </td>
 
         <td>
-        $${formatMoney(item.marketValue)}
+
+        $${formatMoney(
+        item.marketValue
+        )}
+
         </td>
 
         <td class="${
         item.pnl>=0
-        ?"positive"
-        :"negative"
+        ? "positive"
+        : "negative"
         }">
-        $${formatMoney(item.pnl)}
+
+        $${formatMoney(
+        item.pnl
+        )}
+
         </td>
 
         <td>
+
         ${weight.toFixed(2)}%
+
         </td>
 
         `;
 
-        tbody.appendChild(tr);
+        tbody.appendChild(
+        tr
+        );
 
     });
 
@@ -216,62 +249,86 @@ async function loadPortfolio(){
     document.getElementById(
     "totalUsd"
     ).innerHTML =
-    "$" + formatMoney(totalValue);
+    "$" +
+    formatMoney(
+    totalValue
+    );
 
     document.getElementById(
     "totalCny"
     ).innerHTML =
-    "¥" + formatMoney(totalValue * usdCny);
+    "≈ ¥" +
+    formatMoney(
+    totalValue * usdCny
+    );
 
     document.getElementById(
     "totalPnl"
     ).innerHTML =
-    "$" + formatMoney(totalPnl);
+    "$" +
+    formatMoney(
+    totalPnl
+    );
 
     document.getElementById(
     "totalReturn"
     ).innerHTML =
     (
-        totalPnl /
-        totalCost *
-        100
-    ).toFixed(2) + "%";
+    totalPnl
+    /
+    totalCost
+    *
+    100
+    ).toFixed(2)
+    + "%";
 
     document.getElementById(
     "aiWeight"
     ).innerHTML =
     (
-        aiValue /
-        totalValue *
-        100
-    ).toFixed(2) + "%";
+    aiValue
+    /
+    totalValue
+    *
+    100
+    ).toFixed(2)
+    + "%";
 
     document.getElementById(
     "leveragedWeight"
     ).innerHTML =
     (
-        leveragedValue /
-        totalValue *
-        100
-    ).toFixed(2) + "%";
+    leveragedValue
+    /
+    totalValue
+    *
+    100
+    ).toFixed(2)
+    + "%";
 
     document.getElementById(
     "bondWeight"
     ).innerHTML =
     (
-        bondValue /
-        totalValue *
-        100
-    ).toFixed(2) + "%";
+    bondValue
+    /
+    totalValue
+    *
+    100
+    ).toFixed(2)
+    + "%";
 
     document.getElementById(
     "cashWeight"
     ).innerHTML =
     (
-        cashValue /
-        totalValue *
-        100
-    ).toFixed(2) + "%";
+    cashValue
+    /
+    totalValue
+    *
+    100
+    ).toFixed(2)
+    + "%";
 
     const largest =
     positions[0];
@@ -279,42 +336,51 @@ async function loadPortfolio(){
     document.getElementById(
     "largestPosition"
     ).innerHTML =
-    "最大持仓：" + largest.symbol;
+    largest.symbol;
 
     const nvda =
     positions.find(
-        x=>x.symbol==="NVDA"
+    x=>x.symbol==="NVDA"
     );
 
     const nvdaWeight =
     nvda
-    ? nvda.value / totalValue * 100
+    ?
+    nvda.value
+    /
+    totalValue
+    *
+    100
     : 0;
 
     document.getElementById(
     "nvdaExposure"
     ).innerHTML =
-    "NVDA占比：" +
-    nvdaWeight.toFixed(2) + "%";
+    nvdaWeight.toFixed(2)
+    + "%";
 
     let alerts = [];
 
-    if(nvdaWeight > 35)
+    if(nvdaWeight>35)
         alerts.push(
         "⚠ NVDA仓位超过35%"
         );
 
     if(
-        leveragedValue /
-        totalValue > 0.40
+    leveragedValue
+    /
+    totalValue
+    > 0.40
     )
         alerts.push(
         "⚠ 杠杆仓位超过40%"
         );
 
     if(
-        bondValue /
-        totalValue > 0.30
+    bondValue
+    /
+    totalValue
+    > 0.30
     )
         alerts.push(
         "⚠ 利率暴露过高"
@@ -324,75 +390,88 @@ async function loadPortfolio(){
     "riskAlerts"
     ).innerHTML =
     alerts.length
-    ? alerts.join("<br>")
-    : "暂无风险警报";
-
-    if(pieChart)
-        pieChart.destroy();
-
-    pieChart =
-    new Chart(
-        document.getElementById("pieChart"),
-        {
-            type:"pie",
-            data:{
-                labels:
-                positions.map(
-                    x=>x.symbol
-                ),
-                datasets:[
-                {
-                    data:
-                    positions.map(
-                        x=>x.value
-                    )
-                }]
-            },
-            options:{
-                responsive:true,
-                maintainAspectRatio:false
-            }
-        }
-    );
+    ?
+    alerts.map(
+    x=>`<div>${x}</div>`
+    ).join("")
+    :
+    `<div style="background:#14532d;color:#bbf7d0;padding:10px 14px;border-radius:12px;">✓ 暂无风险警报</div>`;
 
     if(allocationChart)
         allocationChart.destroy();
 
     allocationChart =
     new Chart(
-        document.getElementById("allocationChart"),
-        {
-            type:"doughnut",
-            data:{
-                labels:[
-                    "AI",
-                    "Leveraged",
-                    "Bond",
-                    "Cash"
+    document.getElementById(
+    "allocationChart"
+    ),
+    {
+        type:"doughnut",
+
+        data:{
+
+            labels:[
+                "AI",
+                "Leveraged",
+                "Bond",
+                "Cash"
+            ],
+
+            datasets:[
+            {
+
+                data:[
+                    aiValue,
+                    leveragedValue,
+                    bondValue,
+                    cashValue
                 ],
-                datasets:[
-                {
-                    data:[
-                        aiValue,
-                        leveragedValue,
-                        bondValue,
-                        cashValue
-                    ]
-                }]
-            },
-            options:{
-                responsive:true,
-                maintainAspectRatio:false
+
+                backgroundColor:[
+                    "#2563eb",
+                    "#7c3aed",
+                    "#f59e0b",
+                    "#22c55e"
+                ],
+
+                borderWidth:0
+
+            }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+
+                    position:"bottom",
+
+                    labels:{
+
+                        color:"#f8fafc",
+
+                        padding:20
+
+                    }
+
+                }
+
             }
+
         }
-    );
+
+    });
 
 }
 
 loadPortfolio();
 
 setInterval(
-    loadPortfolio,
-    60000
+loadPortfolio,
+60000
 );
-
