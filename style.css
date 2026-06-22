@@ -26,7 +26,6 @@
 body{
 
     background:var(--bg);
-
     color:var(--text);
 
     font-family:
@@ -38,119 +37,89 @@ body{
     padding:16px;
 
     max-width:1400px;
-
     margin:auto;
 
 }
 
+/* HEADER */
+
 header{
-
-    margin-bottom:20px;
-
+    margin-bottom:18px;
 }
 
 h1{
-
     font-size:30px;
-
     font-weight:800;
-
 }
 
 .subtitle{
-
     color:var(--muted);
-
-    margin-top:6px;
-
     font-size:13px;
-
+    margin-top:6px;
 }
+
+.update-time{
+    margin-top:6px;
+    font-size:12px;
+    color:var(--muted);
+    opacity:.8;
+}
+
+/* HERO */
 
 .hero-card{
 
-    background:
-    linear-gradient(
-    135deg,
-    var(--blue),
-    var(--blue2)
-    );
-
-    border-radius:24px;
-
-    padding:24px;
+    background:linear-gradient(135deg,#1d4ed8,#2563eb);
+    border-radius:28px;
+    padding:26px;
 
     margin-bottom:18px;
 
-    box-shadow:
-    0 15px 40px rgba(37,99,235,.25);
+    box-shadow:0 20px 60px rgba(37,99,235,.30);
 
 }
 
 .hero-label{
-
     font-size:11px;
-
     letter-spacing:2px;
-
     opacity:.85;
-
 }
 
 .hero-value{
-
-    font-size:42px;
-
+    font-size:44px;
     font-weight:800;
-
     margin-top:10px;
-
 }
 
 .hero-cny{
-
     opacity:.85;
-
     margin-top:4px;
-
 }
 
 .hero-stats{
-
     display:flex;
-
     justify-content:space-between;
-
-    margin-top:20px;
-
+    margin-top:18px;
 }
 
 .hero-small{
-
     font-size:11px;
-
-    opacity:.8;
-
+    opacity:.75;
     margin-bottom:4px;
-
 }
 
 .hero-number{
-
-    font-size:22px;
-
+    font-size:20px;
     font-weight:700;
-
 }
+
+/* GRID */
 
 .metric-grid{
 
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:12px;
-
     margin-bottom:18px;
 
 }
@@ -158,152 +127,115 @@ h1{
 .metric-card{
 
     background:var(--card);
-
     border:1px solid var(--border);
-
     border-radius:18px;
-
-    padding:18px;
+    padding:16px;
 
 }
 
 .metric-title{
-
-    color:var(--muted);
-
     font-size:12px;
-
-    margin-bottom:6px;
-
+    color:var(--muted);
 }
 
 .metric-value{
-
-    font-size:28px;
-
+    font-size:26px;
     font-weight:700;
-
+    margin-top:6px;
 }
+
+/* CARD */
 
 .card{
 
     background:var(--card);
-
     border:1px solid var(--border);
-
     border-radius:20px;
 
-    padding:20px;
-
-    margin-bottom:18px;
+    padding:18px;
+    margin-bottom:16px;
 
 }
 
 .card h3{
 
-    color:var(--muted);
-
     font-size:13px;
-
-    margin-bottom:16px;
-
+    color:var(--muted);
     letter-spacing:1px;
+    margin-bottom:14px;
 
 }
+
+/* RISK */
 
 .risk-item{
 
     display:flex;
-
     justify-content:space-between;
 
-    margin-bottom:10px;
+    padding:6px 0;
+
+    font-size:14px;
 
 }
 
 .risk-alerts div{
 
     background:#7f1d1d;
-
     color:#fecaca;
 
-    padding:10px;
-
+    padding:10px 12px;
     border-radius:12px;
 
     margin-top:8px;
 
-}
-
-.positive{
-
-    color:var(--green);
-
-    font-weight:700;
-
-}
-
-.negative{
-
-    color:var(--red);
-
-    font-weight:700;
+    font-weight:600;
 
 }
 
 /* TOP HOLDINGS */
 
 .top-item{
-
-    margin-bottom:16px;
-
+    margin-bottom:14px;
 }
 
 .top-row{
-
     display:flex;
-
     justify-content:space-between;
-
     margin-bottom:6px;
+}
 
+.top-symbol{
+    font-weight:700;
+    font-size:14px;
+}
+
+.top-weight{
+    color:#93c5fd;
+    font-weight:700;
 }
 
 .top-bar{
-
     height:10px;
-
-    background:#1f2937;
-
-    border-radius:20px;
-
+    background:#0f172a;
+    border-radius:999px;
     overflow:hidden;
-
 }
 
 .top-fill{
-
     height:100%;
-
-    background:
-    linear-gradient(
-    90deg,
-    #2563eb,
-    #60a5fa
-    );
-
+    border-radius:999px;
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
 }
 
 /* MOBILE HOLDINGS */
 
 .holding-card{
 
-    background:#0f172a;
-
+    background:linear-gradient(180deg,#111827,#0f172a);
     border:1px solid var(--border);
 
-    border-radius:18px;
-
+    border-radius:20px;
     padding:16px;
 
     margin-bottom:14px;
@@ -311,176 +243,145 @@ h1{
 }
 
 .holding-header{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
-    margin-bottom:12px;
-
+    margin-bottom:10px;
 }
 
 .symbol{
-
     font-size:22px;
-
-    font-weight:700;
-
+    font-weight:800;
 }
 
 .shares{
-
     color:var(--muted);
-
+    font-size:12px;
 }
 
 .holding-grid{
-
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:10px;
-
     margin-top:10px;
-
 }
 
 .holding-label{
-
+    font-size:11px;
     color:var(--muted);
-
-    font-size:12px;
-
 }
 
 .holding-value{
-
-    font-size:16px;
-
+    font-size:15px;
     font-weight:600;
-
 }
 
 /* TABLE */
 
 .table-container{
-
     overflow-x:auto;
-
 }
 
 table{
-
     width:100%;
-
     min-width:900px;
-
     border-collapse:collapse;
-
 }
 
 thead{
-
     background:var(--card2);
-
 }
 
-th{
-
-    font-size:12px;
-
-    color:#cbd5e1;
-
-}
-
-th,
-td{
-
+th,td{
     padding:14px;
-
-    border-bottom:1px solid var(--border);
-
     text-align:right;
-
+    border-bottom:1px solid var(--border);
 }
 
 th:first-child,
 td:first-child{
-
     text-align:left;
+}
 
+th{
+    font-size:12px;
+    color:#cbd5e1;
 }
 
 tbody tr:hover{
-
     background:#1e293b;
+}
 
+/* COLORS */
+
+.positive{
+    color:var(--green);
+    font-weight:700;
+}
+
+.negative{
+    color:var(--red);
+    font-weight:700;
 }
 
 /* CHART */
 
 canvas{
-
     width:100% !important;
-
     height:320px !important;
-
 }
 
 /* RESPONSIVE */
 
 .mobile-only{
-
     display:block;
-
 }
 
 .desktop-only{
-
     display:none;
-
 }
 
 @media(min-width:900px){
 
     body{
-
         padding:24px;
-
     }
 
     h1{
-
         font-size:40px;
-
     }
 
     .hero-value{
-
-        font-size:58px;
-
+        font-size:56px;
     }
 
     .metric-grid{
-
-        grid-template-columns:
-        repeat(4,1fr);
-
+        grid-template-columns:repeat(4,1fr);
     }
 
     .mobile-only{
-
         display:none;
-
     }
 
     .desktop-only{
-
         display:block;
+    }
+}
 
+/* SMALL MOBILE OPTIMIZATION */
+
+@media(max-width:600px){
+
+    .hero-value{
+        font-size:36px;
+    }
+
+    .metric-value{
+        font-size:22px;
+    }
+
+    .card{
+        padding:14px;
     }
 
 }
